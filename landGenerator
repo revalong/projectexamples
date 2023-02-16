@@ -1,0 +1,81 @@
+import numpy as np
+import random
+import os
+import time
+map1 = np.full((33,33),0)#creates a 33x33 array and fills it with 0's
+
+map1[0][0]= random.randint(1,100)#fills 0,0 with a random integer 1-100
+map1[32][0]=random.randint(1,100)
+map1[0][32]=random.randint(1,100)
+map1[32][32]=random.randint(1,100)#fills the other corners
+
+map1[16][16]=(map1[0][0]+map1[32][0]+map1[0][32]+map1[32][32])/4+random.randint(-3,3)#fills the middle with the average of the four corners plus a random integer
+
+
+def colors(map1, x, y):#function to change values in the map to their color
+	if(map1[x][y]<25):#if the value is less than 25 then it changes it to blue with a ~
+		print("\x1b[44m", end='~')
+	elif(map1[x][y]<50):#if the value is greater than 25 and less than 50 it changes it to sand 
+		print("\x1b[43m", end='^')
+	elif(map1[x][y]<75):#if the value is greater than 50 and less than 75 it changes it to green
+		print("\x1b[42m", end='*')
+	elif(map1[x][y]<=100):#if the value is 75-100 it change it to white for snow
+		print("\x1b[47m",end='#')
+
+def printmap():	#function to through the map and send the coordinates to the colors function  which prints them
+	for i in range(32):
+		for j in range(32):
+			colors(map1,i,j)#send the values to the colors function	
+		print()
+
+def notfilledout(tl,tr,bl,br):#checks if the values in the square are already changed and returns true if the aren't filled out yet
+	middle=((int((tl[0]+bl[0])/2),int((tl[1]+tr[1])/2)))#calculates the middle coordinates
+	tm=((int((tl[0]+tr[0])/2)),middle[1])#calculates the top middle coordinates
+	bm=(int((bl[0]+br[0])/2),middle[1])#calculates the bottom middle coordinates
+	rm=(middle[0],int((tr[1]+br[1])/2))#calculates the right middle coordinates
+	lm=(middle[0],int((tl[1]+bl[1])/2))#calculates the left middle coordinates
+	if(map1[tm]==0):#if the value is 0, meaning it hasn't been changed, it returns true
+		return True
+	if(map1[bm]==0):#repeats for all of the sides
+		return True
+	if(map1[rm]==0):
+		return True
+	if(map1[lm]==0):
+		return True
+	return False#if none of the values were 0 then it returns false
+
+def xstep(tl,tr,bl,br):#function that loops through the map and changes the values
+	time.sleep(.01)
+	os.system("cls||clear")#clears the screen
+	middle=((int((tl[0]+bl[0])/2),int((tl[1]+tr[1])/2)))#calculates the middle value of the four parameters that were passes
+	map1[middle]=((map1[tl]+map1[tr]+map1[bl]+map1[br])/4)+random.randint(-3,3)#changes the middle value to the average of the four corners plus a random integer
+	printmap()#prints the map with the new calculated middle value
+	tm=((int((tl[0]+tr[0])/2)),middle[1])#calculates the top middle coordinates
+	map1[tm]=((map1[tl]+map1[tr]+map1[middle])/3)+random.randint(-3,3)#changes the top middle to the average the three surroudning coordinates and adds a random integer
+	bm=(int((bl[0]+br[0])/2),middle[1])#repeats for bottom middle
+	map1[bm]=((map1[bl]+map1[br]+map1[middle])/3)+random.randint(-3,3)
+	rm=(middle[0],int((tr[1]+br[1])/2))#repeats for right middle
+	map1[rm]=((map1[tr]+map1[br]+map1[middle])/3)+random.randint(-3,3)
+	lm=(middle[0],int((tl[1]+bl[1])/2))#repeats for left middle
+	map1[lm]=((map1[middle]+map1[tl]+map1[bl])/3)+random.randint(-3,3)
+	time.sleep(.01)
+	os.system("cls||clear")#clears the screen
+	printmap()#prints the map
+	if(notfilledout(tl,tm,lm,middle)):#if the top left sqaure of the map is not fileld out yet 
+		xstep(tl,tm,lm,middle)#then it calls the xstep function and send the top left coordinates
+	if(notfilledout(tm,tr,middle,rm)):#if the top right square fo the map is not filled out yet
+		xstep(tm,tr,middle,rm)#calls the xstep function and sends the top right square
+	if(notfilledout(lm,middle,bl,bm)):#repeats for the bottom left square
+		xstep(lm,middle,bl,bm)
+	if(notfilledout(middle,rm,bm,br)):#repeats for the bottom right square
+		xstep(middle,rm,bm,br)
+
+printmap()
+os.system("cls||clear")
+xstep((0,0),(0,32),(32,0),(32,32))#calls the xstep function sending the origional 4 corners of the map
+
+
+
+
+
+
