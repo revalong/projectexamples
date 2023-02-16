@@ -1,0 +1,195 @@
+import time
+import numpy as np
+import random
+size = int(input('Enter a city size: '))
+arr = np.full((size,size), '\033[0;32m.')
+
+money=0
+population=0
+
+def printarray(arr):
+	global money
+	global population
+	money=0
+	population=0
+	for r in arr:
+		for c in r:
+			print(c, end=' ')
+			if(c=='\033[0;31m#'):
+				money+=1000
+				population+=5
+			if(c=='\033[0;34m~'):
+				money+=2000
+			if(c=='\033[0;30m='):
+				money+=500
+		print()
+	print('\033[0;30mCurrent revenue: $',  money)
+	print('\033[0;30mCurrent population: ', population)
+
+def notbuiltyet(x,y,arr):
+	if(valid(x,y,arr)):
+		if(arr[x][y]=='\033[0;32m.'):
+			return True
+	else:
+		return False
+
+def river(x,y,arr):
+	if(notbuiltyet(x,y,arr)):
+		if(valid(x,y,arr)):
+			arr[x][y]='\033[0;34m~'
+	elif(valid(x,y,arr)):
+		demolish(x,y,arr)
+	if(notbuiltyet(x+1,y,arr)):	
+		if(valid(x+1,y,arr)):
+			arr[x+1][y]='\033[0;34m~'
+	elif(valid(x+1,y,arr)):
+		demolish(x+1,y,arr)
+	if(notbuiltyet(x-1,y,arr)):
+		if(valid(x-1,y,arr)):
+			arr[x-1][y]='\033[0;34m~'
+	elif(valid(x-1,y,arr)):
+		demolish(x-1,y,arr)
+	
+
+	
+
+def road(x,y,arr):
+	if(notbuiltyet(x,y,arr)):	
+		if(valid(x,y,arr)):
+			arr[x][y]='\033[0;30m='
+		if(valid(x,y+1,arr)):
+			arr[x][y+1]='\033[0;30m='
+		if(valid(x,y-1,arr)):
+			arr[x][y-1]='\033[0;30m='
+	elif(valid(x,y,arr)):
+		demolish(x,y,arr)
+
+def house(x,y,arr):
+	if(notbuiltyet(x,y,arr)):
+		if(valid(x,y,arr)):
+			arr[x][y]='\033[0;31m#'
+		if(valid(x+1,y,arr)):
+			arr[x+1][y]='\033[0;31m#'
+		if(valid(x,y+1,arr)):
+			arr[x][y+1]='\033[0;31m#'
+		if(valid(x+1,y+1,arr)):
+			arr[x+1][y+1]='\033[0;31m#'
+	elif(valid(x,y,arr)):
+		demolish(x,y,arr)
+
+
+i=0
+def earthquake(arr):
+	i=0		
+
+def demolish(x,y,arr):
+	arr[x][y]='\033[0;30mx'
+	
+
+def valid(x,y,arr):
+	if(x<size and y<size and x>=0 and y>=0):
+		return True
+	else:
+		return False
+def meteor(arr): 
+	print('METEOR!!!')
+	p=random.randint(0,size-1)
+	q=random.randint(0,size-1)
+	arr[p][q]= '\033[0;40m0'
+	printarray(arr)
+	time.sleep(1)
+	if(valid(p-1,q-1,arr)):
+		arr[p-1][q-1]='\033[0;40m0'
+	if(valid(p-1,q,arr)):
+		arr[p-1][q]='\033[0;40m0'
+	if(valid(p-1,q+1,arr)):
+		arr[p-1][q+1]='\033[0;40m0'
+	if(valid(p,q-1,arr)):
+		arr[p][q-1]='\033[0;40m0'
+	if(valid(p,q+1,arr)):
+		arr[p][q+1]='\033[0;40m0'
+	if(valid(p+1,q-1,arr)):
+		arr[p+1][q-1]='\033[0;40m0'
+	if(valid(p+1,q,arr)):
+		arr[p+1][q]='\033[0;40m0'
+	if(valid(p+1,q+1,arr)):
+		arr[p+1][q+1]='\033[0;40m0'
+	printarray(arr)
+	time.sleep(1)
+	if(valid(p-1,q-1,arr)):
+		arr[p-1][q-1]='\033[0;32m.'
+	if(valid(p-1,q,arr)):
+		arr[p-1][q]='\033[0;32m.'
+	if(valid(p-1,q+1,arr)):
+		arr[p-1][q+1]='\033[0;32m.'
+	if(valid(p,q-1,arr)):
+		arr[p][q-1]='\033[0;32m.'
+	if(valid(p,q+1,arr)):
+		arr[p][q+1]='\033[0;32m.'
+	if(valid(p+1,q-1,arr)):
+		arr[p+1][q-1]='\033[0;32m.'
+	if(valid(p+1,q,arr)):
+		arr[p+1][q]='\033[0;32m.'
+	if(valid(p+1,q+1,arr)):
+		arr[p+1][q+1]='\033[0;32m.'
+	if(valid(p,q,arr)):
+		arr[p][q]='\033[0;32m.'	
+
+
+
+
+
+def tornado(arr):
+	print('TORNADO!!!')
+	x=0
+	y=0 
+	while x<size-1 and y<size-1:
+		arr[x][y]= '\033[1;30m0'
+		arr[x+1][y]='\033[1;30m0'
+		arr[x][y+1]='\033[1;30m0'
+		arr[x+1][y+1]='\033[1;30m0'
+		printarray(arr)
+		time.sleep(1)
+		arr[x][y]= '\033[0;32m.'
+		arr[x+1][y]='\033[0;32m.'
+		arr[x][y+1]='\033[0;32m.'
+		arr[x+1][y+1]='\033[0;32m.'	
+		x+=1
+		y+=1
+		time.sleep(.3)
+
+
+
+def build(arr):
+	x,y = [int(i) for i in input('Pick a coordinate to build! ').split()]
+	if(valid(x,y,arr)==False):
+		print('invalid coordinates, try again')
+		build(arr)
+	print('What do you want to build? "river" or "road" or "house"')
+	response = input()
+	if(response =='river'):
+		river(x,y,arr)
+	elif(response =='road'):
+		road(x,y,arr)
+	elif(response =='house'):
+		house(x,y,arr)
+	else:
+		print('invalid response, try again!')
+		build(arr)
+	n=random.randint(0,5)
+	if(n==0):
+		tornado(arr)
+	if(n==1):
+		meteor(arr)
+	printarray(arr)
+
+answer= 'yes'
+
+while answer == 'yes':
+	build(arr)  
+	print('do you want to keep playing? "yes" or "no"')
+	answer = input()
+
+
+
+                                                               
